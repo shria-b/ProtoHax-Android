@@ -50,6 +50,7 @@ android {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.getByName('debug')
+            firebaseCrashlytics { mappingFileUploadEnabled false }
         }
     }
     compileOptions {

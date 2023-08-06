@@ -43,15 +43,13 @@ class Shortcut(val module: CheatModule, private val overlayManager: OverlayManag
 
 		val text = TextView(ctx).apply {
 			gravity = Gravity.CENTER or Gravity.CENTER
-			text = module.name.filter { it.isUpperCase() }
-			textSize = 14f
+			text = module.name
+			textSize = 13.5f
 			updateTextColor()
-
 			setPadding(30, 30, 30, 30)
-
 			background = GradientDrawable().apply {
 				setColor(getBackgroundColor(ctx))
-				cornerRadius = 15f
+				cornerRadius = 30f
 				alpha = 150
 			}
 		}
@@ -104,13 +102,13 @@ class Shortcut(val module: CheatModule, private val overlayManager: OverlayManag
 
 		private fun getToggleOnColor(ctx: Context): Int {
 			return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-				ctx.getColor(ctx.getColor(android.R.color.system_accent1_600, android.R.color.system_accent1_200))
+				ctx.getColor(ctx.getColor(android.R.color.system_accent1_400, android.R.color.system_accent1_200))
 			} else TOGGLE_ON_COLOR
 		}
 
 		private fun getToggleOffColor(ctx: Context): Int {
 			return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-				ctx.getColor(ctx.getColor(android.R.color.system_accent1_200, android.R.color.system_accent1_600))
+				ctx.getColor(ctx.getColor(android.R.color.system_accent1_200, android.R.color.system_accent1_400))
 			} else TOGGLE_OFF_COLOR
 		}
 	}

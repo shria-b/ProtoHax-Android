@@ -1,8 +1,6 @@
 package dev.sora.protohax.ui.overlay.hud.elements
 
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.text.TextPaint
 import dev.sora.protohax.MyApplication
 import dev.sora.protohax.relay.MinecraftRelay
@@ -10,9 +8,10 @@ import dev.sora.protohax.ui.overlay.RenderLayerView
 import dev.sora.protohax.ui.overlay.hud.HudAlignment
 import dev.sora.protohax.ui.overlay.hud.HudElement
 import dev.sora.protohax.ui.overlay.hud.HudManager
+import dev.sora.protohax.util.ColorUtils
 import dev.sora.relay.cheat.module.impl.combat.ModuleTargets
-import dev.sora.relay.game.entity.EntityOther
 import dev.sora.relay.game.entity.EntityPlayer
+import dev.sora.relay.game.entity.EntityOther
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.regex.Pattern
@@ -86,9 +85,11 @@ class TargetIndicatorElement : HudElement(HudManager.TARGET_INDICATOR_ELEMENT_ID
 		val healthStr = "HP: ${currentHealth.roundToInt()} / ${maxHealth.roundToInt()}"
 		val nameWidth = paint.measureText(name).coerceAtLeast(paint.measureText(healthStr))
 		width = nameWidth + lineSpacing * 4
-
+		val startColor = androidx.core.graphics.ColorUtils.setAlphaComponent(Color.WHITE, 90)
+		val endColor = androidx.core.graphics.ColorUtils.setAlphaComponent(Color.WHITE, 80)
+		val gradient = LinearGradient(0f, 0f, width, height, startColor, endColor, Shader.TileMode.CLAMP)
 		canvas.drawRoundRect(0f, 0f, width, height, lineSpacing, lineSpacing, Paint().apply {
-			color = Color.argb(100, 255, 255, 255)
+			shader = gradient
 		})
 
 		canvas.drawText(name, lineSpacing * 2, lineSpacing * 2 - paint.fontMetrics.ascent, paint)

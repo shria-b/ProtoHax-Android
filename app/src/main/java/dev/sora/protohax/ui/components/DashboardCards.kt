@@ -3,6 +3,7 @@ package dev.sora.protohax.ui.components
 import android.content.Intent
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,6 +48,7 @@ fun CardLoginAlert(
 ) {
     if (AccountManager.currentAccount == null) {
         Card(
+			border = BorderStroke(1.dp,color = MaterialTheme.colorScheme.outline),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(18.dp, 10.dp),
@@ -78,6 +80,7 @@ fun CardCurrentApplication(
     val ctx = LocalContext.current
 
     Card(
+		border = BorderStroke(1.dp,color = MaterialTheme.colorScheme.outline),
         modifier = Modifier
             .fillMaxWidth()
             .padding(18.dp, 10.dp),

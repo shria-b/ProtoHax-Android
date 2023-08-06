@@ -98,7 +98,7 @@ class RenderLayerView(ctx: Context, private val windowManager: WindowManager, pr
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val event = EventRender(session, canvas, editMode)
+        val event = EventRender(session, canvas, context, editMode)
         session.eventManager.emit(event)
         if (event.needRefresh) {
             invalidate()
@@ -140,7 +140,7 @@ class RenderLayerView(ctx: Context, private val windowManager: WindowManager, pr
 		windowManager.removeView(this)
 	}
 
-    class EventRender(session: GameSession, val canvas: Canvas, val editMode: Boolean, var needRefresh: Boolean = false) : GameEvent(session, "render")
+    class EventRender(session: GameSession, val canvas: Canvas, val context: Context, val editMode: Boolean, var needRefresh: Boolean = false) : GameEvent(session, "render")
 
     /**
      * notify the render layer to refresh at next frame

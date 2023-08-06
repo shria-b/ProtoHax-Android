@@ -107,7 +107,6 @@ h1 {
 						// activate account on Minecraft authentication server
 						credentials.fetchMinecraftToken()
 						val username = getUsernameFromChain(RelayListenerXboxLogin.fetchRawChain(credentials.fetchIdentityToken().token, EncryptionUtils.createKeyPair().public).readText())
-
 						AccountManager.accounts.add(Account(username, activity.device, account!!.second))
 						AccountManager.save()
 
@@ -173,11 +172,11 @@ h1 {
         }
 
         private fun getUsernameFromChain(chains: String): String {
-            val body = JsonParser.parseString(chains).asJsonObject
+			val body = JsonParser.parseString(chains).asJsonObject
 			if (!body.has("chain")) {
 				error("no field named \"chain\" found in json: $chains")
 			}
-            for (chain in body.getAsJsonArray("chain")) {
+			for (chain in body.getAsJsonArray("chain")) {
                 val chainBody = JsonParser.parseString(base64Decode(chain.asString.split(".")[1]).toString(Charsets.UTF_8)).asJsonObject
                 if (chainBody.has("extraData")) {
                     val extraData = chainBody.getAsJsonObject("extraData")

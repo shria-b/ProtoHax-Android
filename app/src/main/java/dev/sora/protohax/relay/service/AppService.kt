@@ -29,7 +29,7 @@ import java.net.NetworkInterface
 
 class AppService : VpnService() {
 
-    private lateinit var windowManager: WindowManager
+    lateinit var windowManager: WindowManager
 
     private var vpnDescriptor: ParcelFileDescriptor? = null
     private var tun: TUN? = null

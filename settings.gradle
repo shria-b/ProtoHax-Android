@@ -13,6 +13,13 @@ dependencyResolutionManagement {
         maven { url = 'https://raw.githubusercontent.com/MoonLife-Studio/maven_repo/main/maven_repo/'}
         google()
         mavenCentral()
+        maven {
+            url = 'https://maven.pkg.github.com/MoonLife-Studio/ProtoHax'
+            credentials {
+                username = System.getenv("USERNAME_GITHUB")
+                password = System.getenv("TOKEN_GITHUB")
+            }
+        }
     }
 }
 rootProject.name = 'ProtoHax-Android'

@@ -26,6 +26,8 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 	private var sortingModeValue by listValue("SortingMode", SortingMode.values(), SortingMode.LENGTH_DESCENDING)
 	private var textRTLValue by boolValue("TextRTL", true)
 	private var colorModeValue by listValue("ColorMode", ColorMode.values(), ColorMode.HUE)
+	private var fontModeValue by listValue("Font", FontMode.values(), FontMode.DEFAULT)
+	private var colorReversedSortValue by boolValue("ColorReversedSort", false)
 	private var colorRedValue by intValue(
 		"ColorRed",
 		255,
@@ -41,19 +43,17 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 		255,
 		0..255
 	).visible { colorModeValue != ColorMode.HUE && colorModeValue != ColorMode.RAINBOW }
-	private var rainbowDelay by intValue(
-		"Delay",
-		70,
-		10..200
-	).visible { colorModeValue == ColorMode.RAINBOW }
-	private var fontModeValue by listValue("Font", FontMode.values(), FontMode.DEFAULT)
-	private var colorReversedSortValue by boolValue("ColorReversedSort", false)
-	private var blurRadiusValue by floatValue("Radius", 1f, 0f..10f)
 	private var textSizeValue by intValue("TextSize", 15, 10..50).listen {
 		paint.textSize = it * MyApplication.density
 		it
 	}
 	private var spacingValue by intValue("Spacing", 3, 0..20)
+	private var blurRadiusValue by floatValue("Radius", 1f, 0f..10f)
+	private var rainbowDelay by intValue(
+		"Delay",
+		70,
+		10..200
+	).visible { colorModeValue == ColorMode.RAINBOW }
 
 	private val paint = TextPaint().also {
 		it.color = Color.WHITE
@@ -67,7 +67,7 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 		private set
 
 	init {
-	    alignmentValue = HudAlignment.RIGHT_TOP
+		alignmentValue = HudAlignment.RIGHT_TOP
 		posX = 0
 		posY = 0
 	}
@@ -109,6 +109,7 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 		val maxWidth = modules.maxOf { paint.measureText(it.name) }
 
 		modules.forEachIndexed { i, module ->
+			val textWidth = paint.measureText(module.name)
 			val blurMaskFilter = BlurMaskFilter(blurRadiusValue, BlurMaskFilter.Blur.NORMAL)
 			paint.maskFilter = blurMaskFilter
 			paint.color = colorModeValue.getColor(
@@ -121,7 +122,7 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 			)
 			canvas.drawText(
 				module.name,
-				if (textRTLValue) maxWidth - paint.measureText(module.name) else 0f,
+				if (textRTLValue) maxWidth - textWidth else 0f,
 				-paint.fontMetrics.ascent + y,
 				paint
 			)

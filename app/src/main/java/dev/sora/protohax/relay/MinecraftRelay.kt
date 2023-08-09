@@ -32,19 +32,19 @@ import kotlin.concurrent.thread
 
 object MinecraftRelay {
 
-    private var relay: Relay? = null
+	private var relay: Relay? = null
 
-    val session = GameSession()
-    val moduleManager: ModuleManager
-    val configManager: ConfigManagerFileSystem
+	val session = GameSession()
+	val moduleManager: ModuleManager
+	val configManager: ConfigManagerFileSystem
 	val hudManager: HudManager
 
 	val tokenCacheFile = File(MyApplication.instance.cacheDir, "token_cache.json")
 
 	var loaderThread: Thread? = null
 
-    init {
-        moduleManager = ModuleManager(session)
+	init {
+		moduleManager = ModuleManager(session)
 		hudManager = HudManager(session)
 
 		// load asynchronously
@@ -55,7 +55,9 @@ object MinecraftRelay {
 				if (!it.exists()) it.mkdirs()
 				ModuleResourcePackSpoof.resourcePackProvider = ModuleResourcePackSpoof.FileSystemResourcePackProvider(it)
 			}
-
+			MyApplication.instance.getExternalFilesDir("fonts")?.also {
+				if (!it.exists()) it.mkdirs()
+			}
 			if (Settings.enableCommandManager.getValue(MyApplication.instance)) {
 				// command manager will register listener itself
 				val commandManager = CommandManager(session)
@@ -69,28 +71,28 @@ object MinecraftRelay {
 			loaderThread = null
 		}
 
-        configManager = ConfigManagerFileSystem(MyApplication.instance.getExternalFilesDir("configs")!!, ".json").also {
+		configManager = ConfigManagerFileSystem(MyApplication.instance.getExternalFilesDir("configs")!!, ".json").also {
 			it.addSection(ConfigSectionModule(moduleManager))
 			it.addSection(ConfigSectionShortcut(MyApplication.overlayManager))
 			it.addSection(hudManager)
 		}
-    }
+	}
 
-    private fun registerAdditionalModules(moduleManager: ModuleManager) {
+	private fun registerAdditionalModules(moduleManager: ModuleManager) {
 		moduleManager.registerModule(ModuleESP())
 		moduleManager.registerModule(ModuleNameTags())
 	}
 
-    private fun constructRelay(): Relay {
-        return Relay(object : MinecraftRelayListener {
-            override fun onSessionCreation(session: MinecraftRelaySession): InetSocketAddress {
-                // add listeners
-                session.listeners.add(RelayListenerNetworkSettings(session))
-                session.listeners.add(RelayListenerAutoCodec(session))
-                this@MinecraftRelay.session.netSession = session
-                session.listeners.add(this@MinecraftRelay.session)
+	private fun constructRelay(): Relay {
+		return Relay(object : MinecraftRelayListener {
+			override fun onSessionCreation(session: MinecraftRelaySession): InetSocketAddress {
+				// add listeners
+				session.listeners.add(RelayListenerNetworkSettings(session))
+				session.listeners.add(RelayListenerAutoCodec(session))
+				this@MinecraftRelay.session.netSession = session
+				session.listeners.add(this@MinecraftRelay.session)
 
-                val sessionEncryptor = if (Settings.offlineSessionEncryption.getValue(MyApplication.instance) && AccountManager.currentAccount == null) {
+				val sessionEncryptor = if (Settings.offlineSessionEncryption.getValue(MyApplication.instance) && AccountManager.currentAccount == null) {
 					RelayListenerEncryptedSession()
 				} else {
 					AccountManager.currentAccount?.let { account ->
@@ -102,18 +104,18 @@ object MinecraftRelay {
 						}
 					}
 				}
-                sessionEncryptor?.let {
-                    it.session = session
-                    session.listeners.add(it)
-                }
+				sessionEncryptor?.let {
+					it.session = session
+					session.listeners.add(it)
+				}
 
-                // resolve original ip and pass to relay client
-                val address = session.peer.channel.config().getOption(NativeRakConfig.RAK_NATIVE_TARGET_ADDRESS)
-                logInfo("SessionCreation $address")
+				// resolve original ip and pass to relay client
+				val address = session.peer.channel.config().getOption(NativeRakConfig.RAK_NATIVE_TARGET_ADDRESS)
+				logInfo("SessionCreation $address")
 				return address
-            }
-        })
-    }
+			}
+		})
+	}
 
 	fun updateReliability() {
 		relay?.optionReliability = if (Settings.enableRakReliability.getValue(MyApplication.instance))

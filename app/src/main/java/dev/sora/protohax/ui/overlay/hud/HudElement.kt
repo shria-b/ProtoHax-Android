@@ -1,5 +1,6 @@
 package dev.sora.protohax.ui.overlay.hud
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -37,7 +38,7 @@ abstract class HudElement(val name: String) : Configurable {
 	private var dragPointerOffsetX = 0
 	private var dragPointerOffsetY = 0
 
-	abstract fun onRender(canvas: Canvas, editMode: Boolean, needRefresh: AtomicBoolean)
+	abstract fun onRender(canvas: Canvas, editMode: Boolean, needRefresh: AtomicBoolean, context: Context)
 
 	open fun getPosition(canvasWidth: Int, canvasHeight: Int): Vector2f {
 		val position = alignmentValue.getPosition(canvasWidth, canvasHeight)
@@ -58,7 +59,7 @@ abstract class HudElement(val name: String) : Configurable {
 		this@HudElement.needRefresh.set(false)
 		getPosition(canvas.width, canvas.height).also {
 			canvas.withTranslation(it.x, it.y) {
-				onRender(this, editMode, this@HudElement.needRefresh)
+				onRender(this, editMode, this@HudElement.needRefresh, context)
 			}
 			if (editMode) {
 				drawBorder(canvas, it)

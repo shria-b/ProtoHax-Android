@@ -1,5 +1,6 @@
 package dev.sora.protohax.ui.overlay.hud.elements
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.text.TextPaint
@@ -36,7 +37,7 @@ class TextElement : HudElement(HudManager.TEXT_ELEMENT_IDENTIFIER) {
 	override var width = paint.measureText(textElementDefault)
 		private set
 
-	override fun onRender(canvas: Canvas, editMode: Boolean, needRefresh: AtomicBoolean) {
+	override fun onRender(canvas: Canvas, editMode: Boolean, needRefresh: AtomicBoolean, context: Context) {
 		paint.color = Color.rgb(colorRedValue, colorGreenValue, colorBlueValue)
 
 		canvas.drawText(textValue, 0f, -paint.fontMetrics.ascent, paint)

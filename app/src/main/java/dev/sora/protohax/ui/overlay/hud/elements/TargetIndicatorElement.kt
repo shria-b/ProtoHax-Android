@@ -1,5 +1,6 @@
 package dev.sora.protohax.ui.overlay.hud.elements
 
+import android.content.Context
 import android.graphics.*
 import android.text.TextPaint
 import dev.sora.protohax.MyApplication
@@ -32,7 +33,7 @@ class TargetIndicatorElement : HudElement(HudManager.TARGET_INDICATOR_ELEMENT_ID
 
 	override var height = 10f
 		private set
-	override var width = 10f
+	override var width = 40f
 		private set
 
 	private var health = 0.5f
@@ -43,7 +44,7 @@ class TargetIndicatorElement : HudElement(HudManager.TARGET_INDICATOR_ELEMENT_ID
 		alignmentValue = HudAlignment.CENTER
 	}
 
-	override fun onRender(canvas: Canvas, editMode: Boolean, needRefresh: AtomicBoolean) {
+	override fun onRender(canvas: Canvas, editMode: Boolean, needRefresh: AtomicBoolean, context: Context) {
 		val name: String
 		val currentHealth: Float
 		val maxHealth: Float
@@ -82,21 +83,30 @@ class TargetIndicatorElement : HudElement(HudManager.TARGET_INDICATOR_ELEMENT_ID
 		val lineSpacing = (textSizeValue / 5) * MyApplication.density
 
 		height = lineHeight * 3 + lineSpacing * 6
-		val healthStr = "HP: ${currentHealth.roundToInt()} / ${maxHealth.roundToInt()}"
+		val healthStr = "Health: ${currentHealth.roundToInt()} / ${maxHealth.roundToInt()}"
 		val nameWidth = paint.measureText(name).coerceAtLeast(paint.measureText(healthStr))
 		width = nameWidth + lineSpacing * 4
-		val startColor = androidx.core.graphics.ColorUtils.setAlphaComponent(Color.WHITE, 90)
-		val endColor = androidx.core.graphics.ColorUtils.setAlphaComponent(Color.WHITE, 80)
-		val gradient = LinearGradient(0f, 0f, width, height, startColor, endColor, Shader.TileMode.CLAMP)
+
+		val borderWidth = 2f * MyApplication.density
+		val borderRect = RectF(0f, 0f, width, height)
+		val borderPaint = Paint().apply {
+			style = Paint.Style.STROKE
+			strokeWidth = borderWidth
+			maskFilter = BlurMaskFilter(borderWidth, BlurMaskFilter.Blur.NORMAL)
+			color = Color.WHITE
+		}
+
+		canvas.drawRoundRect(borderRect, lineSpacing, lineSpacing, borderPaint)
+
 		canvas.drawRoundRect(0f, 0f, width, height, lineSpacing, lineSpacing, Paint().apply {
-			shader = gradient
+			color = Color.argb(100, 255, 255, 255)
 		})
 
 		canvas.drawText(name, lineSpacing * 2, lineSpacing * 2 - paint.fontMetrics.ascent, paint)
 		canvas.drawText(healthStr, lineSpacing * 2, lineSpacing * 3 + lineHeight - paint.fontMetrics.ascent, paint)
 
 		canvas.drawRoundRect(lineSpacing * 2, lineSpacing * 4 + lineHeight * 2, lineSpacing * 2 + health * nameWidth, lineSpacing * 4 + lineHeight * 3, lineSpacing, lineSpacing, Paint().apply {
-			color = dev.sora.protohax.util.Color.HSBtoRGB(health / 3, 1f, 1f)
+			color = dev.sora.protohax.util.Color.HSBtoRGB(health / 3, 0.5f, 1f)
 		})
 
 		needRefresh.set(true)

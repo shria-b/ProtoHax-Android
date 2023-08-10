@@ -1,10 +1,7 @@
 package dev.sora.protohax.ui.overlay.hud.elements
 
 import android.content.Context
-import android.graphics.BlurMaskFilter
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Typeface
+import android.graphics.*
 import android.text.TextPaint
 import androidx.core.content.res.ResourcesCompat
 import dev.sora.protohax.MyApplication
@@ -110,8 +107,6 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 
 		modules.forEachIndexed { i, module ->
 			val textWidth = paint.measureText(module.name)
-			val blurMaskFilter = BlurMaskFilter(blurRadiusValue, BlurMaskFilter.Blur.NORMAL)
-			paint.maskFilter = blurMaskFilter
 			paint.color = colorModeValue.getColor(
 				if (colorReversedSortValue) modules.size - i else i,
 				modules.size,
@@ -120,6 +115,14 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 				colorBlueValue,
 				rainbowDelay
 			)
+			canvas.drawText(
+				module.name,
+				if (textRTLValue) maxWidth - textWidth else 0f,
+				-paint.fontMetrics.ascent + y,
+				paint
+			)
+			val blurMaskFilter = BlurMaskFilter(blurRadiusValue, BlurMaskFilter.Blur.NORMAL)
+			paint.maskFilter = blurMaskFilter
 			canvas.drawText(
 				module.name,
 				if (textRTLValue) maxWidth - textWidth else 0f,

@@ -105,17 +105,13 @@ class TargetIndicatorElement : HudElement(HudManager.TARGET_INDICATOR_ELEMENT_ID
 		val healthStr = "Health: ${currentHealth.roundToInt()} / ${maxHealth.roundToInt()}"
 		val nameWidth = paint.measureText(name).coerceAtLeast(paint.measureText(healthStr))
 		width = nameWidth + lineSpacing * 4
-
-		val borderWidth = 2f * MyApplication.density
-		val borderRect = RectF(0f, 0f, width, height)
-		val borderPaint = Paint().apply {
-			style = Paint.Style.STROKE
-			strokeWidth = borderWidth
-			maskFilter = BlurMaskFilter(borderWidth, BlurMaskFilter.Blur.NORMAL)
-			color = Color.WHITE
+		if(blurValue) {
+			val blurMaskFilter = BlurMaskFilter(blurRadiusValue, BlurMaskFilter.Blur.NORMAL)
+			paint.maskFilter = blurMaskFilter
+		} else{
+			paint.maskFilter = null
 		}
-
-		canvas.drawRoundRect(borderRect, lineSpacing, lineSpacing, borderPaint)
+		paint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
 
 		canvas.drawRoundRect(0f, 0f, width, height, lineSpacing, lineSpacing, Paint().apply {
 			color = Color.argb(100, 255, 255, 255)

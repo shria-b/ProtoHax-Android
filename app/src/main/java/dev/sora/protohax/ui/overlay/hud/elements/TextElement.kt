@@ -1,6 +1,7 @@
 package dev.sora.protohax.ui.overlay.hud.elements
 
 import android.content.Context
+import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Typeface
@@ -58,6 +59,13 @@ class TextElement : HudElement(HudManager.TEXT_ELEMENT_IDENTIFIER) {
 				}
 			}
 		}
+		if(blurValue) {
+			val blurMaskFilter = BlurMaskFilter(blurRadiusValue, BlurMaskFilter.Blur.NORMAL)
+			paint.maskFilter = blurMaskFilter
+		} else{
+			paint.maskFilter = null
+		}
+		paint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
 		paint.color = Color.rgb(colorRedValue, colorGreenValue, colorBlueValue)
 
 		canvas.drawText(textValue, 0f, -paint.fontMetrics.ascent, paint)

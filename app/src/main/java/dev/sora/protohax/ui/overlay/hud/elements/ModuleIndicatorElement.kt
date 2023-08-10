@@ -50,11 +50,6 @@
 			it
 		}
 		private var spacingValue by intValue("Spacing", 3, 0..20)
-		private var blurValue by boolValue("Blur", true)
-		private var blurRadiusValue by floatValue("Blur Radius", 1f, 0f..10f).visible { blurValue }
-		private var shadowRadiusValue by floatValue("Shadow Radius", 0f, 0f..10f)
-        private var shadowAlphaValue by intValue("Shadow Alpha", 160, 0..255)
-
 		private val paint = TextPaint().also {
 			it.color = Color.WHITE
 			it.isAntiAlias = true

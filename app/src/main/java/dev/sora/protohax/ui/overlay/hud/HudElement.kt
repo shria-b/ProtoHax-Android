@@ -28,6 +28,11 @@ abstract class HudElement(val name: String) : Configurable {
 	var posY = 100
 	var alignmentValue by listValue("Alignment", HudAlignment.values(), HudAlignment.LEFT_TOP)
 	var fontValue by listValue("Font", HudFont.values(), HudFont.DEFAULT)
+	var blurValue by boolValue("Blur", true)
+	var blurRadiusValue by floatValue("Blur Radius", 1f, 0f..10f).visible { blurValue }
+	var shadowRadiusValue by floatValue("Shadow Radius", 0f, 0f..10f)
+	var shadowAlphaValue by intValue("Shadow Alpha", 160, 0..255)
+
 
 	abstract val height: Float
 	abstract val width: Float

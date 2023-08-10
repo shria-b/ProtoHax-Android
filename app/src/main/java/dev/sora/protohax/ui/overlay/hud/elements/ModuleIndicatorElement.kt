@@ -45,7 +45,8 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 		it
 	}
 	private var spacingValue by intValue("Spacing", 3, 0..20)
-	private var blurRadiusValue by floatValue("Radius", 1f, 0f..10f)
+	private var blurRadiusValue by floatValue("Blur Radius", 1f, 0f..10f)
+	private var shadowRadiusValue by floatValue("Shadow Radius", 0f, 0f..10f)
 	private var rainbowDelay by intValue(
 		"Delay",
 		70,
@@ -90,6 +91,9 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 			FontMode.DEFAULT ->{
 				paint.typeface = Typeface.DEFAULT
 			}
+			FontMode.BOLD ->{
+				paint.typeface = Typeface.DEFAULT_BOLD
+			}
 			FontMode.CUSTOM ->{
 				val fontFile = File(context.getExternalFilesDir("fonts"), "Custom_Font.ttf")
 				val customTypeface = Typeface.createFromFile(fontFile)
@@ -107,6 +111,9 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 
 		modules.forEachIndexed { i, module ->
 			val textWidth = paint.measureText(module.name)
+			val blurMaskFilter = BlurMaskFilter(blurRadiusValue, BlurMaskFilter.Blur.NORMAL)
+			paint.maskFilter = blurMaskFilter
+			paint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(160, 0, 0, 0))
 			paint.color = colorModeValue.getColor(
 				if (colorReversedSortValue) modules.size - i else i,
 				modules.size,
@@ -115,14 +122,6 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 				colorBlueValue,
 				rainbowDelay
 			)
-			canvas.drawText(
-				module.name,
-				if (textRTLValue) maxWidth - textWidth else 0f,
-				-paint.fontMetrics.ascent + y,
-				paint
-			)
-			val blurMaskFilter = BlurMaskFilter(blurRadiusValue, BlurMaskFilter.Blur.NORMAL)
-			paint.maskFilter = blurMaskFilter
 			canvas.drawText(
 				module.name,
 				if (textRTLValue) maxWidth - textWidth else 0f,
@@ -212,6 +211,7 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 
 	enum class FontMode(override val choiceName: String) : NamedChoice{
 		DEFAULT("Default"),
+		BOLD("Bold"),
 		CUSTOM("Custom")
 	}
 }

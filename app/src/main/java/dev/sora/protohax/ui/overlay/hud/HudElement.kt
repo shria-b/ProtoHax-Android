@@ -27,6 +27,7 @@ abstract class HudElement(val name: String) : Configurable {
 	var posX = 100
 	var posY = 100
 	var alignmentValue by listValue("Alignment", HudAlignment.values(), HudAlignment.LEFT_TOP)
+	var fontValue by listValue("Font", HudFont.values(), HudFont.DEFAULT)
 
 	abstract val height: Float
 	abstract val width: Float

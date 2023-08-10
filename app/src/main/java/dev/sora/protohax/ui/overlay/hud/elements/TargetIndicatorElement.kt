@@ -8,12 +8,14 @@ import dev.sora.protohax.relay.MinecraftRelay
 import dev.sora.protohax.ui.overlay.RenderLayerView
 import dev.sora.protohax.ui.overlay.hud.HudAlignment
 import dev.sora.protohax.ui.overlay.hud.HudElement
+import dev.sora.protohax.ui.overlay.hud.HudFont
 import dev.sora.protohax.ui.overlay.hud.HudManager
 import dev.sora.protohax.util.ColorUtils
 import dev.sora.relay.cheat.module.impl.combat.ModuleTargets
 import dev.sora.relay.game.entity.EntityPlayer
 import dev.sora.relay.game.entity.EntityOther
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityDataTypes
+import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.regex.Pattern
 import kotlin.math.roundToInt
@@ -48,6 +50,23 @@ class TargetIndicatorElement : HudElement(HudManager.TARGET_INDICATOR_ELEMENT_ID
 		val name: String
 		val currentHealth: Float
 		val maxHealth: Float
+		when(fontValue){
+			HudFont.DEFAULT ->{
+				paint.typeface = Typeface.DEFAULT
+			}
+			HudFont.BOLD ->{
+				paint.typeface = Typeface.DEFAULT_BOLD
+			}
+			HudFont.CUSTOM ->{
+				val fontFile = File(context.getExternalFilesDir("fonts"), "Custom_Font.ttf")
+				val customTypeface = Typeface.createFromFile(fontFile)
+				if(fontFile.exists()) {
+					paint.typeface = customTypeface
+				}else{
+					paint.typeface = Typeface.DEFAULT
+				}
+			}
+		}
 		if (editMode) {
 			name = "ProtoHax"
 			health = 0.7f

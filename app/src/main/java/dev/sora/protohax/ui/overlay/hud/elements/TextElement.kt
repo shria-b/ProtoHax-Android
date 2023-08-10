@@ -3,10 +3,13 @@ package dev.sora.protohax.ui.overlay.hud.elements
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Typeface
 import android.text.TextPaint
 import dev.sora.protohax.MyApplication
 import dev.sora.protohax.ui.overlay.hud.HudElement
+import dev.sora.protohax.ui.overlay.hud.HudFont
 import dev.sora.protohax.ui.overlay.hud.HudManager
+import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
 class TextElement : HudElement(HudManager.TEXT_ELEMENT_IDENTIFIER) {
@@ -38,6 +41,23 @@ class TextElement : HudElement(HudManager.TEXT_ELEMENT_IDENTIFIER) {
 		private set
 
 	override fun onRender(canvas: Canvas, editMode: Boolean, needRefresh: AtomicBoolean, context: Context) {
+		when(fontValue){
+			HudFont.DEFAULT ->{
+				paint.typeface = Typeface.DEFAULT
+			}
+			HudFont.BOLD ->{
+				paint.typeface = Typeface.DEFAULT_BOLD
+			}
+			HudFont.CUSTOM ->{
+				val fontFile = File(context.getExternalFilesDir("fonts"), "Custom_Font.ttf")
+				val customTypeface = Typeface.createFromFile(fontFile)
+				if(fontFile.exists()) {
+					paint.typeface = customTypeface
+				}else{
+					paint.typeface = Typeface.DEFAULT
+				}
+			}
+		}
 		paint.color = Color.rgb(colorRedValue, colorGreenValue, colorBlueValue)
 
 		canvas.drawText(textValue, 0f, -paint.fontMetrics.ascent, paint)

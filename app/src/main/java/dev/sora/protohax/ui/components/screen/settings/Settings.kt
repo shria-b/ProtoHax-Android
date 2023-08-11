@@ -15,13 +15,17 @@ object Settings {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) R.string.setting_trust_click_desc else R.string.setting_trust_click_disabled,
 		"TRUST_CLICK", false, override = Build.VERSION.SDK_INT < Build.VERSION_CODES.S, true)
 	val ipv6Status = TabSetting(R.string.setting_ip, "INTERNET_PROTOCOL", IPv6Choices.AUTOMATIC, IPv6Choices.values())
-
-	val settings = arrayOf(offlineSessionEncryption, enableCommandManager, enableRakReliability, trustClicks, ipv6Status)
+	val shortcutStatus = TabSetting(R.string.setting_shortcut, "Shortcut Mode", ShortcutChoices.LONG, ShortcutChoices.values())
+	val settings = arrayOf(offlineSessionEncryption, enableCommandManager, enableRakReliability, trustClicks, ipv6Status, shortcutStatus)
 
 	enum class IPv6Choices(override val displayName: Int, override val internalName: String) : TabChoice {
 		AUTOMATIC(R.string.setting_ip_auto, "auto"),
 		ENABLED(R.string.setting_ip_enabled, "enabled"),
 		DISABLED(R.string.setting_ip_disabled, "disabled"),
 		V6ONLY(R.string.setting_ip_only, "v6only"),
+	}
+	enum class ShortcutChoices(override val displayName: Int, override val internalName: String) : TabChoice {
+		LONG(R.string.setting_shortcut_long, "Long"),
+		SHORT(R.string.setting_shortcut_short, "Short"),
 	}
 }

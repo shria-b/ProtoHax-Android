@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.WindowManager
 import android.widget.TextView
 import dev.sora.protohax.relay.MinecraftRelay
+import dev.sora.protohax.ui.components.screen.settings.Settings
 import dev.sora.protohax.util.ContextUtils.getColor
 import dev.sora.relay.cheat.module.CheatModule
 import dev.sora.relay.cheat.module.EventModuleToggle
@@ -43,7 +44,10 @@ class Shortcut(val module: CheatModule, private val overlayManager: OverlayManag
 
 		val text = TextView(ctx).apply {
 			gravity = Gravity.CENTER or Gravity.CENTER
-			text = module.name
+			text = when(Settings.shortcutStatus.getValue(ctx)){
+				Settings.ShortcutChoices.LONG -> module.name
+				Settings.ShortcutChoices.SHORT-> module.name.filter { it.isUpperCase() }
+			}
 			textSize = 13.5f
 			updateTextColor()
 			setPadding(30, 30, 30, 30)

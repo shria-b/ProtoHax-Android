@@ -57,6 +57,9 @@
     <string name="setting_trust_click_disabled">All of clicks are trusted below Android 12</string>
     <string name="setting_logs">Logs</string>
     <string name="setting_logs_desc">Show Logs</string>
+    <string name="setting_shortcut">Shortcut</string>
+    <string name="setting_shortcut_short">Short</string>
+    <string name="setting_shortcut_long">Long</string>
 
     <string name="logcat_clear">Clear Logs</string>
     <string name="logcat_share">Share Logs</string>

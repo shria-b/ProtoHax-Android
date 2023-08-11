@@ -55,6 +55,7 @@
     <string name="setting_logs">日誌</string>
     <string name="setting_logs_desc">顯示日誌</string>
 
+    <string name="setting_shortcut">Shortcut</string>
     <string name="logcat_clear">清除日誌</string>
     <string name="logcat_share">共享日誌</string>
 

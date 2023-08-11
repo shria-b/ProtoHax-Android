@@ -54,13 +54,18 @@
     <string name="setting_trust_click_disabled">Android 12 以下所有点击均受信任</string>
     <string name="setting_logs">日志</string>
     <string name="setting_logs_desc">显示日志</string>
+    <string name="setting_shortcut">Shortcut</string>
+    <string name="setting_shortcut_short">缩写</string>
+    <string name="setting_shortcut_long">全称</string>
 
     <string name="logcat_clear">清除日志</string>
     <string name="logcat_share">共享日志</string>
 
+    <string name="hud_delete_prompt">确定要删除%s吗?</string>
     <string name="tab_dashboard">仪表板</string>
     <string name="tab_accounts">帐户</string>
     <string name="tab_configs">配置</string>
+    <string name="tab_hud">HUD</string>
     <string name="tab_settings">设定</string>
     <string name="tab_btn_navigation_drawer">导览抽屉</string>
 

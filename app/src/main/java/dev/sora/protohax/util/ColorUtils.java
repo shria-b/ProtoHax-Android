@@ -8,8 +8,11 @@ public class ColorUtils {
         return getRainbow3(counter[0] * 20);
     }
     public static int astolfoRainbow(int delay, int offset, int index) {
-        double rainbowDelay = Math.ceil(System.currentTimeMillis() + (long)((long) delay * index)) / offset;
-        return Color.HSBtoRGB((double)((float)((rainbowDelay %= 360.0) / 360.0)) < 0.5 ? -((float)(rainbowDelay / 360.0)) : (float)(rainbowDelay / 360.0), 0.5f, 1.0f);
+        double rainbowDelay = (System.currentTimeMillis() + (delay * index)) / (double) offset;
+        float hue = (float) ((rainbowDelay % 360.0) / 360.0);
+        float saturation = 0.5f;
+        float brightness = 1.0f;
+        return Color.HSBtoRGB(hue, saturation, brightness);
     }
     public static int getRainbow3(int tick) {
         double d = 0;

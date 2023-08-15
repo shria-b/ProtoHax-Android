@@ -56,7 +56,7 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 	private var stripeOffsetValue by intValue(
 		"Stripe Offset",
 		5,
-		0..10
+		0..15
 	)	.visible { stripeValue }
 	private var backgroundValue by boolValue("Background", true)
 	private var backgroundBlurValue by boolValue("Blur", true).visible {
@@ -216,9 +216,15 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 			}
 			if (stripeValue) {
 				stripePaint.color = ColorUtils.astolfoRainbow(rainbowDelayValue, modules.size, if (colorReversedSortValue) modules.size - i else i)
-				val stripeLeft = maxWidth + stripeOffsetValue
-				val stripeRect = RectF(stripeLeft, bgTop, bgRight, bgBottom)
-				canvas.drawRoundRect(stripeRect, 4 * MyApplication.density, 4 * MyApplication.density, stripePaint)
+				if (!textRTLValue) {
+					val stripeRight = bgLeft * 2 - stripeOffsetValue
+					val stripeRect = RectF(bgLeft, bgTop, stripeRight, bgBottom)
+					canvas.drawRoundRect(stripeRect, 4 * MyApplication.density, 4 * MyApplication.density, stripePaint)
+				} else {
+					val stripeLeft = maxWidth + stripeOffsetValue
+					val stripeRect = RectF(stripeLeft, bgTop, bgRight, bgBottom)
+					canvas.drawRoundRect(stripeRect, 4 * MyApplication.density, 4 * MyApplication.density, stripePaint)
+				}
 			}
 			canvas.drawText(
 				module.name,

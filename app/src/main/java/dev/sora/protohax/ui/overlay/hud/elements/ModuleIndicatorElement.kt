@@ -23,7 +23,7 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 		"Rainbow Delay",
 		70,
 		10..200
-	).visible { colorModeValue == ColorMode.RAINBOW || backgroundColorModeValue == backgroundColorMode.RAINBOW }
+	)
 	private var sortingModeValue by listValue("SortingMode", SortingMode.values(), SortingMode.LENGTH_DESCENDING)
 	private var textRTLValue by boolValue("TextRTL", true)
 	private var colorModeValue by listValue("ColorMode", ColorMode.values(), ColorMode.HUE)
@@ -43,32 +43,51 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 		255,
 		0..255
 	).visible { colorModeValue != ColorMode.HUE && colorModeValue != ColorMode.RAINBOW }
-	private var textSizeValue by intValue("TextSize", 15, 10..50).listen {
+	private var textSizeValue by intValue("TextSize", 15, 1..50).listen {
 		paint.textSize = it * MyApplication.density
 		it
 	}
-	private var spacingValue by intValue("Spacing", 3, 0..20)
+	private var spacingValue by intValue("Spacing", 3, 0..30)
+	private var stripeValue by boolValue("Stripe", true)
+	private var stripeBlurValue by boolValue("Stripe Blur", true).visible {
+		stripeValue
+	}
+	var stripeBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { stripeBlurValue }
+	private var stripeOffsetValue by intValue(
+		"Stripe Offset",
+		5,
+		0..10
+	)	.visible { stripeValue }
 	private var backgroundValue by boolValue("Background", true)
+	private var backgroundBlurValue by boolValue("Blur", true).visible {
+		backgroundValue
+	}
+	var backgroundBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { backgroundBlurValue }
 	private var backgroundColorModeValue by listValue(
 		"Background Mode",
-		backgroundColorMode.values(),
-		backgroundColorMode.CUSTOM
-	)
+		BackgroundColorMode.values(),
+		BackgroundColorMode.CUSTOM
+	).visible { backgroundValue }
 	private var backgroundColorRedValue by intValue(
 		"ColorRed",
 		255,
 		0..255
-	).visible { backgroundColorModeValue != backgroundColorMode.HUE && backgroundColorModeValue != backgroundColorMode.RAINBOW && backgroundColorModeValue != backgroundColorMode.BLACK }
+	).visible { backgroundColorModeValue != BackgroundColorMode.HUE && backgroundColorModeValue != BackgroundColorMode.RAINBOW && backgroundColorModeValue != BackgroundColorMode.BLACK && backgroundValue }
 	private var backgroundColorGreenValue by intValue(
 		"ColorGreen",
 		255,
 		0..255
-	).visible { backgroundColorModeValue != backgroundColorMode.HUE && backgroundColorModeValue != backgroundColorMode.RAINBOW && backgroundColorModeValue != backgroundColorMode.BLACK }
+	).visible { backgroundColorModeValue != BackgroundColorMode.HUE && backgroundColorModeValue != BackgroundColorMode.RAINBOW && backgroundColorModeValue != BackgroundColorMode.BLACK && backgroundValue }
 	private var backgroundColorBlueValue by intValue(
 		"ColorBlue",
 		255,
 		0..255
-	).visible { backgroundColorModeValue != backgroundColorMode.HUE && backgroundColorModeValue != backgroundColorMode.RAINBOW && backgroundColorModeValue != backgroundColorMode.BLACK }
+	).visible { backgroundColorModeValue != BackgroundColorMode.HUE && backgroundColorModeValue != BackgroundColorMode.RAINBOW && backgroundColorModeValue != BackgroundColorMode.BLACK && backgroundValue }
+	private var backgroundAlphaValue by intValue(
+		"Alpha",
+		120,
+		0..255
+	).visible { backgroundColorModeValue != BackgroundColorMode.HUE && backgroundColorModeValue != BackgroundColorMode.RAINBOW && backgroundColorModeValue != BackgroundColorMode.BLACK && backgroundValue }
 
 	private val paint = TextPaint().also {
 		it.color = Color.WHITE
@@ -77,6 +96,11 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 	}
 
 	private val backgroundPaint = Paint().also {
+		it.color = Color.WHITE
+		it.isAntiAlias = true
+	}
+
+	private val stripePaint = Paint().also {
 		it.color = Color.WHITE
 		it.isAntiAlias = true
 	}
@@ -145,17 +169,31 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 			val bgRight = bgLeft + textWidth + 2 * padding
 			val bgBottom = bgTop + lineHeight + 2 * padding
 			val bgRect = RectF(bgLeft, bgTop, bgRight, bgBottom)
-
 			if (blurValue) {
 				val blurMaskFilter = BlurMaskFilter(blurRadiusValue, BlurMaskFilter.Blur.NORMAL)
 				paint.maskFilter = blurMaskFilter
-				backgroundPaint.maskFilter = blurMaskFilter
 			} else {
 				paint.maskFilter = null
+			}
+			if(backgroundBlurValue){
+				val blurMaskFilter = BlurMaskFilter(backgroundBlurRadiusValue, BlurMaskFilter.Blur.NORMAL)
+				backgroundPaint.maskFilter = blurMaskFilter
+			} else {
 				backgroundPaint.maskFilter = null
 			}
+			if(stripeBlurValue){
+				val blurMaskFilter = BlurMaskFilter(stripeBlurRadiusValue, BlurMaskFilter.Blur.NORMAL)
+				stripePaint.maskFilter = blurMaskFilter
+			} else {
+				stripePaint.maskFilter = null
+			}
 			paint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
-			backgroundPaint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
+			if(backgroundValue) {
+				backgroundPaint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
+			}
+			if(stripeValue) {
+				stripePaint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
+			}
 			paint.color = colorModeValue.getColor(
 				if (colorReversedSortValue) modules.size - i else i,
 				modules.size,
@@ -164,16 +202,23 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 				colorBlueValue,
 				rainbowDelayValue
 			)
-			backgroundPaint.color = backgroundColorModeValue.getColor(
-				if (colorReversedSortValue) modules.size - i else i,
-				modules.size,
-				backgroundColorRedValue,
-				backgroundColorGreenValue,
-				backgroundColorBlueValue,
-				rainbowDelayValue
-			)
 			if (backgroundValue) {
+				backgroundPaint.color = backgroundColorModeValue.getColor(
+					if (colorReversedSortValue) modules.size - i else i,
+					modules.size,
+					backgroundColorRedValue,
+					backgroundColorGreenValue,
+					backgroundColorBlueValue,
+					rainbowDelayValue,
+					backgroundAlphaValue
+				)
 				canvas.drawRoundRect(bgRect, 4 * MyApplication.density, 4 * MyApplication.density, backgroundPaint)
+			}
+			if (stripeValue) {
+				stripePaint.color = ColorUtils.astolfoRainbow(rainbowDelayValue, modules.size, if (colorReversedSortValue) modules.size - i else i)
+				val stripeLeft = maxWidth + stripeOffsetValue
+				val stripeRect = RectF(stripeLeft, bgTop, bgRight, bgBottom)
+				canvas.drawRoundRect(stripeRect, 4 * MyApplication.density, 4 * MyApplication.density, stripePaint)
 			}
 			canvas.drawText(
 				module.name,
@@ -263,29 +308,29 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 		abstract fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int
 	}
 
-	enum class backgroundColorMode(override val choiceName: String) : NamedChoice {
+	enum class BackgroundColorMode(override val choiceName: String) : NamedChoice {
 		CUSTOM("Custom") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int {
-				return Color.rgb(r, g, b)
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int {
+				return Color.argb(alpha, r, g, b)
 			}
 		},
 		HUE("Hue") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int {
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int {
 				return dev.sora.protohax.util.Color.HSBtoRGB(index.toFloat() / size, 0.5f, 1f)
 			}
 		},
 		RAINBOW("RainBow") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int {
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int {
 				return ColorUtils.astolfoRainbow(delay, size, index)
 			}
 		},
 		BLACK("Black") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int {
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int {
 				return Color.BLACK
 			}
 		},
 		SATURATION_SHIFT_ASCENDING("SaturationShift") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int {
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int {
 				val hsv = floatArrayOf(0f, 0f, 0f)
 				Color.colorToHSV(Color.rgb(r, g, b), hsv)
 				hsv[2] = index.toFloat() / size
@@ -293,6 +338,6 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 			}
 		};
 
-		abstract fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int
+		abstract fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int
 	}
 }

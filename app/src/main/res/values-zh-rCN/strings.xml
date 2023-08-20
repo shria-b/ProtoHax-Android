@@ -17,6 +17,7 @@
     <string name="dashboard_recommended_version">推荐：v%s</string>
     <string name="dashboard_fab_connect">连接</string>
     <string name="dashboard_fab_disconnect">断开连接</string>
+    <string name="dashboard_user">账户: %s</string>
 
     <string name="config_rename">重命名</string>
     <string name="config_copy">複制</string>
@@ -65,7 +66,6 @@
     <string name="tab_dashboard">仪表板</string>
     <string name="tab_accounts">帐户</string>
     <string name="tab_configs">配置</string>
-    <string name="tab_hud">HUD</string>
     <string name="tab_settings">设定</string>
     <string name="tab_btn_navigation_drawer">导览抽屉</string>
 

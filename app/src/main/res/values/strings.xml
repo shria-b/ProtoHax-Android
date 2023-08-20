@@ -19,6 +19,7 @@
     <string name="dashboard_recommended_version">Recommended: v%s</string>
     <string name="dashboard_fab_connect">Connect</string>
     <string name="dashboard_fab_disconnect">Disconnect</string>
+    <string name="dashboard_user">Account: %s</string>
 
     <string name="config_rename">Rename</string>
     <string name="config_copy">Copy</string>

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +25,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -51,7 +53,8 @@ fun CardLoginAlert(
 			border = BorderStroke(1.dp,color = MaterialTheme.colorScheme.outline),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp, 10.dp),
+                .padding(18.dp, 10.dp)
+			    .shadow(2.dp, shape = MaterialTheme.shapes.medium),
 			onClick = {
 				navigateToTopLevelDestination(TOP_LEVEL_DESTINATIONS.find { it.iconTextId == R.string.tab_accounts } ?: return@Card)
 			}
@@ -73,6 +76,37 @@ fun CardLoginAlert(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun CardUser(
+	navigateToTopLevelDestination: (PHaxTopLevelDestination) -> Unit
+) {
+	if (AccountManager.currentAccount != null) {
+		Card(
+			border = BorderStroke(1.dp,color = MaterialTheme.colorScheme.outline),
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(18.dp, 10.dp)
+				.shadow(2.dp, shape = MaterialTheme.shapes.medium),
+			onClick = {
+				navigateToTopLevelDestination(TOP_LEVEL_DESTINATIONS.find { it.iconTextId == R.string.tab_accounts } ?: return@Card)
+			}
+		) {
+			Row(
+				modifier = Modifier.padding(15.dp),
+				verticalAlignment = Alignment.CenterVertically
+			) {
+				Icon(Icons.Filled.People, null)
+				Spacer(Modifier.size(12.dp))
+				Text(
+					stringResource(R.string.dashboard_user, AccountManager.currentAccount!!.remark),
+					color = MaterialTheme.colorScheme.onBackground
+				)
+			}
+		}
+	}
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun CardCurrentApplication(
     applicationSelected: MutableState<String>,
     pickAppActivityLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
@@ -83,7 +117,8 @@ fun CardCurrentApplication(
 		border = BorderStroke(1.dp,color = MaterialTheme.colorScheme.outline),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(18.dp, 10.dp),
+            .padding(18.dp, 10.dp)
+			.shadow(2.dp, shape = MaterialTheme.shapes.medium),
 		onClick = {
 			pickAppActivityLauncher.launch(Intent(ctx, AppPickerActivity::class.java))
 		}

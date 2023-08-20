@@ -53,11 +53,7 @@ import dev.sora.protohax.R
 import dev.sora.protohax.relay.service.AppService
 import dev.sora.protohax.ui.activities.AppPickerActivity
 import dev.sora.protohax.ui.activities.MainActivity
-import dev.sora.protohax.ui.components.AppIcon
-import dev.sora.protohax.ui.components.CardCurrentApplication
-import dev.sora.protohax.ui.components.CardLoginAlert
-import dev.sora.protohax.ui.components.HyperlinkText
-import dev.sora.protohax.ui.components.PHaxAppBar
+import dev.sora.protohax.ui.components.*
 import dev.sora.protohax.ui.navigation.PHaxTopLevelDestination
 import dev.sora.protohax.util.ContextUtils.isAppExists
 import dev.sora.protohax.util.ContextUtils.toast
@@ -111,6 +107,7 @@ fun DashboardScreen(
     ) {
         Column(modifier = Modifier.padding(it)) {
             CardLoginAlert(navigateToTopLevelDestination)
+			CardUser(navigateToTopLevelDestination)
             CardCurrentApplication(applicationSelected, pickAppActivityLauncher)
         }
     }
@@ -200,7 +197,7 @@ private fun BottomFloatingActionButton(
 				}
 			}
 		},
-		elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+		elevation = FloatingActionButtonDefaults.elevation(8.dp, 8.dp, 8.dp, 8.dp),
 		containerColor = if (connectionState.value) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.primaryContainer,
 		contentColor = if (connectionState.value) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onPrimaryContainer
 	) {
@@ -254,8 +251,8 @@ private fun DialogAbout(state: MutableState<Boolean>) {
                     )
                     val hyperlinks = mutableMapOf(
                         "GPLv3" to "https://www.gnu.org/licenses/gpl-3.0.en.html",
-                        "GitHub" to "https://github.com/hax0r31337/ProtoHax",
-                        "Telegram Channel" to "https://t.me/protohax"
+                        "GitHub" to "https://github.com/Team-MoonMC",
+                        "Discord" to "https://discord.gg/BR4GAEWGeg"
                     )
                     Spacer(modifier = Modifier.size(12.dp))
                     HyperlinkText(

@@ -106,7 +106,7 @@ class TargetIndicatorElement : HudElement(HudManager.TARGET_INDICATOR_ELEMENT_ID
 		val nameWidth = paint.measureText(name).coerceAtLeast(paint.measureText(healthStr))
 		width = nameWidth + lineSpacing * 4
 		if(blurValue) {
-			val blurMaskFilter = BlurMaskFilter(blurRadiusValue, BlurMaskFilter.Blur.NORMAL)
+			val blurMaskFilter = BlurMaskFilter(blurRadiusValue, blurModeValue.getBlurMode())
 			paint.maskFilter = blurMaskFilter
 		} else{
 			paint.maskFilter = null

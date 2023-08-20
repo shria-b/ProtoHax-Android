@@ -60,7 +60,7 @@ class TextElement : HudElement(HudManager.TEXT_ELEMENT_IDENTIFIER) {
 			}
 		}
 		if(blurValue) {
-			val blurMaskFilter = BlurMaskFilter(blurRadiusValue, BlurMaskFilter.Blur.NORMAL)
+			val blurMaskFilter = BlurMaskFilter(blurRadiusValue, blurModeValue.getBlurMode())
 			paint.maskFilter = blurMaskFilter
 		} else{
 			paint.maskFilter = null

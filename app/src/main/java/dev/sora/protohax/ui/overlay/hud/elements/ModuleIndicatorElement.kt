@@ -6,10 +6,7 @@ import android.text.TextPaint
 import dev.sora.protohax.MyApplication
 import dev.sora.protohax.relay.MinecraftRelay
 import dev.sora.protohax.ui.overlay.RenderLayerView
-import dev.sora.protohax.ui.overlay.hud.HudAlignment
-import dev.sora.protohax.ui.overlay.hud.HudElement
-import dev.sora.protohax.ui.overlay.hud.HudFont
-import dev.sora.protohax.ui.overlay.hud.HudManager
+import dev.sora.protohax.ui.overlay.hud.*
 import dev.sora.protohax.util.ColorUtils
 import dev.sora.relay.cheat.module.CheatModule
 import dev.sora.relay.cheat.module.EventModuleToggle
@@ -52,7 +49,11 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 	private var stripeBlurValue by boolValue("Stripe Blur", true).visible {
 		stripeValue
 	}
+	private var stripeBlurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { stripeBlurValue }
 	var stripeBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { stripeBlurValue }
+	private var stripeRoundValue by boolValue("Round", true).visible {
+		backgroundValue
+	}
 	private var stripeOffsetValue by intValue(
 		"Stripe Offset",
 		5,
@@ -62,7 +63,11 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 	private var backgroundBlurValue by boolValue("Blur", true).visible {
 		backgroundValue
 	}
-	var backgroundBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { backgroundBlurValue }
+	private var backgroundBlurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { backgroundBlurValue }
+	private var backgroundBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { backgroundBlurValue }
+	private var backgroundRoundValue by boolValue("Round", true).visible {
+		backgroundValue
+	}
 	private var backgroundColorModeValue by listValue(
 		"Background Mode",
 		BackgroundColorMode.values(),
@@ -170,19 +175,19 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 			val bgBottom = bgTop + lineHeight + 2 * padding
 			val bgRect = RectF(bgLeft, bgTop, bgRight, bgBottom)
 			if (blurValue) {
-				val blurMaskFilter = BlurMaskFilter(blurRadiusValue, BlurMaskFilter.Blur.NORMAL)
+				val blurMaskFilter = BlurMaskFilter(blurRadiusValue, blurModeValue.getBlurMode())
 				paint.maskFilter = blurMaskFilter
 			} else {
 				paint.maskFilter = null
 			}
 			if(backgroundBlurValue){
-				val blurMaskFilter = BlurMaskFilter(backgroundBlurRadiusValue, BlurMaskFilter.Blur.NORMAL)
+				val blurMaskFilter = BlurMaskFilter(backgroundBlurRadiusValue, backgroundBlurModeValue.getBlurMode())
 				backgroundPaint.maskFilter = blurMaskFilter
 			} else {
 				backgroundPaint.maskFilter = null
 			}
 			if(stripeBlurValue){
-				val blurMaskFilter = BlurMaskFilter(stripeBlurRadiusValue, BlurMaskFilter.Blur.NORMAL)
+				val blurMaskFilter = BlurMaskFilter(stripeBlurRadiusValue, stripeBlurModeValue.getBlurMode())
 				stripePaint.maskFilter = blurMaskFilter
 			} else {
 				stripePaint.maskFilter = null
@@ -212,18 +217,54 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 					rainbowDelayValue,
 					backgroundAlphaValue
 				)
-				canvas.drawRoundRect(bgRect, 4 * MyApplication.density, 4 * MyApplication.density, backgroundPaint)
+				if(backgroundRoundValue) {
+					canvas.drawRoundRect(
+						bgRect,
+						4 * MyApplication.density,
+						4 * MyApplication.density,
+						backgroundPaint
+					)
+				} else {
+					canvas.drawRect(
+						bgRect,
+						backgroundPaint
+					)
+				}
 			}
 			if (stripeValue) {
 				stripePaint.color = ColorUtils.astolfoRainbow(rainbowDelayValue, modules.size, if (colorReversedSortValue) modules.size - i else i)
 				if (!textRTLValue) {
 					val stripeRight = bgLeft * 2 - stripeOffsetValue
 					val stripeRect = RectF(bgLeft, bgTop, stripeRight, bgBottom)
-					canvas.drawRoundRect(stripeRect, 4 * MyApplication.density, 4 * MyApplication.density, stripePaint)
+					if(stripeRoundValue){
+						canvas.drawRoundRect(
+							stripeRect,
+							4 * MyApplication.density,
+							4 * MyApplication.density,
+							stripePaint
+						)
+					} else {
+						canvas.drawRect(
+							stripeRect,
+							stripePaint
+						)
+					}
 				} else {
 					val stripeLeft = maxWidth + stripeOffsetValue
 					val stripeRect = RectF(stripeLeft, bgTop, bgRight, bgBottom)
-					canvas.drawRoundRect(stripeRect, 4 * MyApplication.density, 4 * MyApplication.density, stripePaint)
+					if(stripeRoundValue){
+						canvas.drawRoundRect(
+							stripeRect,
+							4 * MyApplication.density,
+							4 * MyApplication.density,
+							stripePaint
+						)
+					} else {
+						canvas.drawRect(
+							stripeRect,
+							stripePaint
+						)
+					}
 				}
 			}
 			canvas.drawText(

@@ -99,10 +99,10 @@ class Shortcut(val module: CheatModule, private val overlayManager: OverlayManag
 		}
 
 		private fun getBackgroundColor(ctx: Context): Int {
-			return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-				ctx.getColor(ctx.getColor(android.R.color.system_neutral1_10, android.R.color.system_neutral1_900))
-			} else BACKGROUND_COLOR
-		}
+				return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+			ctx.getColor(ctx.getColor(android.R.color.system_neutral1_10, android.R.color.system_neutral1_900))
+		} else BACKGROUND_COLOR
+	}
 
 		private fun getToggleOnColor(ctx: Context): Int {
 			return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

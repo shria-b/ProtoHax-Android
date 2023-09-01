@@ -49,10 +49,10 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 	private var stripeBlurValue by boolValue("Stripe Blur", true).visible {
 		stripeValue
 	}
-	private var stripeBlurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { stripeBlurValue }
-	var stripeBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { stripeBlurValue }
+	private var stripeBlurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { stripeBlurValue && stripeValue }
+	var stripeBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { stripeBlurValue && stripeValue }
 	private var stripeRoundValue by boolValue("Round", true).visible {
-		backgroundValue
+		stripeValue
 	}
 	private var stripeOffsetValue by intValue(
 		"Stripe Offset",
@@ -63,8 +63,8 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 	private var backgroundBlurValue by boolValue("Blur", true).visible {
 		backgroundValue
 	}
-	private var backgroundBlurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { backgroundBlurValue }
-	private var backgroundBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { backgroundBlurValue }
+	private var backgroundBlurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { backgroundBlurValue && backgroundValue }
+	private var backgroundBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { backgroundBlurValue && backgroundValue }
 	private var backgroundRoundValue by boolValue("Round", true).visible {
 		backgroundValue
 	}
@@ -121,6 +121,31 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 		posY = 0
 	}
 
+	private fun paintSettings(){
+		if (blurValue) {
+			paint.maskFilter = BlurMaskFilter(blurRadiusValue, blurModeValue.getBlurMode())
+		} else {
+			paint.maskFilter = null
+		}
+		if(backgroundBlurValue){
+			backgroundPaint.maskFilter = BlurMaskFilter(backgroundBlurRadiusValue, backgroundBlurModeValue.getBlurMode())
+		} else {
+			backgroundPaint.maskFilter = null
+		}
+		if(stripeBlurValue){
+			stripePaint.maskFilter = BlurMaskFilter(stripeBlurRadiusValue, stripeBlurModeValue.getBlurMode())
+		} else {
+			stripePaint.maskFilter = null
+		}
+		paint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
+		if(backgroundValue) {
+			backgroundPaint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
+		}
+		if(stripeValue) {
+			stripePaint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
+		}
+	}
+
 	override fun onRender(canvas: Canvas, editMode: Boolean, needRefresh: AtomicBoolean, context: Context) {
 		val modules = sortingModeValue.getModules(paint)
 		val lineHeight = paint.fontMetrics.let { it.descent - it.ascent }
@@ -142,26 +167,6 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 			}
 			return
 		}
-		when (fontValue) {
-			HudFont.DEFAULT -> {
-				paint.typeface = Typeface.DEFAULT
-			}
-
-			HudFont.BOLD -> {
-				paint.typeface = Typeface.DEFAULT_BOLD
-			}
-
-			HudFont.CUSTOM -> {
-				val fontFile = File(context.getExternalFilesDir("fonts"), "Custom_Font.ttf")
-				val customTypeface = Typeface.createFromFile(fontFile)
-				if (fontFile.exists()) {
-					paint.typeface = customTypeface
-				} else {
-					paint.typeface = Typeface.DEFAULT
-				}
-			}
-		}
-
 		var y = 0f
 		val lineSpacing = (spacingValue * MyApplication.density)
 		val maxWidth = modules.maxOf { paint.measureText(it.name) }
@@ -174,31 +179,7 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 			val bgRight = bgLeft + textWidth + 2 * padding
 			val bgBottom = bgTop + lineHeight + 2 * padding
 			val bgRect = RectF(bgLeft, bgTop, bgRight, bgBottom)
-			if (blurValue) {
-				val blurMaskFilter = BlurMaskFilter(blurRadiusValue, blurModeValue.getBlurMode())
-				paint.maskFilter = blurMaskFilter
-			} else {
-				paint.maskFilter = null
-			}
-			if(backgroundBlurValue){
-				val blurMaskFilter = BlurMaskFilter(backgroundBlurRadiusValue, backgroundBlurModeValue.getBlurMode())
-				backgroundPaint.maskFilter = blurMaskFilter
-			} else {
-				backgroundPaint.maskFilter = null
-			}
-			if(stripeBlurValue){
-				val blurMaskFilter = BlurMaskFilter(stripeBlurRadiusValue, stripeBlurModeValue.getBlurMode())
-				stripePaint.maskFilter = blurMaskFilter
-			} else {
-				stripePaint.maskFilter = null
-			}
-			paint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
-			if(backgroundValue) {
-				backgroundPaint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
-			}
-			if(stripeValue) {
-				stripePaint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
-			}
+			paintSettings()
 			paint.color = colorModeValue.getColor(
 				if (colorReversedSortValue) modules.size - i else i,
 				modules.size,
@@ -207,6 +188,7 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 				colorBlueValue,
 				rainbowDelayValue
 			)
+			paint.typeface = fontValue.getFont(context)
 			if (backgroundValue) {
 				backgroundPaint.color = backgroundColorModeValue.getColor(
 					if (colorReversedSortValue) modules.size - i else i,

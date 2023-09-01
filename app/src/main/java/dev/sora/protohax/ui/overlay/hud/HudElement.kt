@@ -30,7 +30,7 @@ abstract class HudElement(val name: String) : Configurable {
 	var fontValue by listValue("Font", HudFont.values(), HudFont.DEFAULT)
 	var blurValue by boolValue("Blur", true)
 	var blurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { blurValue }
-	var blurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL)
+	var blurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { blurValue }
 	var shadowRadiusValue by floatValue("Shadow Radius", 0f, 0f..10f)
 	var shadowAlphaValue by intValue("Shadow Alpha", 160, 0..255)
 

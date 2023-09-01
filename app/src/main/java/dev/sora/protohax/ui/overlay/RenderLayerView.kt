@@ -131,6 +131,7 @@ class RenderLayerView(ctx: Context, private val windowManager: WindowManager, pr
 		icon.setTint(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 			context.getColor(context.getColor(android.R.color.system_accent1_0, android.R.color.system_accent1_800))
 		} else context.getColor(Color.rgb(255, 255, 255), Color.rgb(56, 30, 114)))
+
 		icon.draw(canvas)
 	}
 

@@ -50,23 +50,7 @@ class TargetIndicatorElement : HudElement(HudManager.TARGET_INDICATOR_ELEMENT_ID
 		val name: String
 		val currentHealth: Float
 		val maxHealth: Float
-		when(fontValue){
-			HudFont.DEFAULT ->{
-				paint.typeface = Typeface.DEFAULT
-			}
-			HudFont.BOLD ->{
-				paint.typeface = Typeface.DEFAULT_BOLD
-			}
-			HudFont.CUSTOM ->{
-				val fontFile = File(context.getExternalFilesDir("fonts"), "Custom_Font.ttf")
-				val customTypeface = Typeface.createFromFile(fontFile)
-				if(fontFile.exists()) {
-					paint.typeface = customTypeface
-				}else{
-					paint.typeface = Typeface.DEFAULT
-				}
-			}
-		}
+
 		if (editMode) {
 			name = "ProtoHax"
 			health = 0.7f
@@ -111,6 +95,7 @@ class TargetIndicatorElement : HudElement(HudManager.TARGET_INDICATOR_ELEMENT_ID
 		} else{
 			paint.maskFilter = null
 		}
+		paint.typeface = fontValue.getFont(context)
 		paint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
 
 		canvas.drawRoundRect(0f, 0f, width, height, lineSpacing, lineSpacing, Paint().apply {

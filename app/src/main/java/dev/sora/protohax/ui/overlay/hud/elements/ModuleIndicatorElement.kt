@@ -3,6 +3,9 @@ package dev.sora.protohax.ui.overlay.hud.elements
 import android.content.Context
 import android.graphics.*
 import android.text.TextPaint
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import dev.sora.protohax.MyApplication
 import dev.sora.protohax.relay.MinecraftRelay
 import dev.sora.protohax.ui.overlay.RenderLayerView
@@ -16,11 +19,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 
 class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_IDENTIFIER) {
-	private var rainbowDelayValue by intValue(
-		"Rainbow Delay",
-		70,
-		10..200
-	)
 	private var sortingModeValue by listValue("SortingMode", SortingMode.values(), SortingMode.LENGTH_DESCENDING)
 	private var textRTLValue by boolValue("TextRTL", true)
 	private var colorModeValue by listValue("ColorMode", ColorMode.values(), ColorMode.HUE)
@@ -45,29 +43,18 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 		it
 	}
 	private var spacingValue by intValue("Spacing", 3, 0..30)
-	private var stripeValue by boolValue("Stripe", true)
+	private var stripeValue by boolValue("Stripe", false)
 	private var stripeBlurValue by boolValue("Stripe Blur", true).visible {
 		stripeValue
 	}
 	private var stripeBlurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { stripeBlurValue && stripeValue }
-	var stripeBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { stripeBlurValue && stripeValue }
-	private var stripeRoundValue by boolValue("Round", true).visible {
-		stripeValue
-	}
-	private var stripeOffsetValue by intValue(
-		"Stripe Offset",
-		5,
-		0..15
-	)	.visible { stripeValue }
-	private var backgroundValue by boolValue("Background", true)
+	private var stripeBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..80f).visible { stripeBlurValue && stripeValue }
+	private var backgroundValue by boolValue("Background", false)
 	private var backgroundBlurValue by boolValue("Blur", true).visible {
 		backgroundValue
 	}
 	private var backgroundBlurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { backgroundBlurValue && backgroundValue }
-	private var backgroundBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..20f).visible { backgroundBlurValue && backgroundValue }
-	private var backgroundRoundValue by boolValue("Round", true).visible {
-		backgroundValue
-	}
+	private var backgroundBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..80f).visible { backgroundBlurValue && backgroundValue }
 	private var backgroundColorModeValue by listValue(
 		"Background Mode",
 		BackgroundColorMode.values(),
@@ -138,12 +125,6 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 			stripePaint.maskFilter = null
 		}
 		paint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
-		if(backgroundValue) {
-			backgroundPaint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
-		}
-		if(stripeValue) {
-			stripePaint.setShadowLayer(shadowRadiusValue, 0f, 0f, Color.argb(shadowAlphaValue, 0, 0, 0))
-		}
 	}
 
 	override fun onRender(canvas: Canvas, editMode: Boolean, needRefresh: AtomicBoolean, context: Context) {
@@ -159,9 +140,9 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 				width = paint.measureText(alertNoModules)
 
 				paint.color =
-					colorModeValue.getColor(0, 1, colorRedValue, colorGreenValue, colorBlueValue, rainbowDelayValue)
+					colorModeValue.getColor(0, 1, colorRedValue, colorGreenValue, colorBlueValue)
 				backgroundPaint.color =
-					colorModeValue.getColor(0, 1, colorRedValue, colorGreenValue, colorBlueValue, rainbowDelayValue)
+					colorModeValue.getColor(0, 1, colorRedValue, colorGreenValue, colorBlueValue)
 				canvas.drawText(alertNoModules, 0f, -paint.fontMetrics.ascent, paint)
 
 			}
@@ -185,8 +166,7 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 				modules.size,
 				colorRedValue,
 				colorGreenValue,
-				colorBlueValue,
-				rainbowDelayValue
+				colorBlueValue
 			)
 			paint.typeface = fontValue.getFont(context)
 			if (backgroundValue) {
@@ -196,57 +176,35 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 					backgroundColorRedValue,
 					backgroundColorGreenValue,
 					backgroundColorBlueValue,
-					rainbowDelayValue,
 					backgroundAlphaValue
 				)
-				if(backgroundRoundValue) {
 					canvas.drawRoundRect(
 						bgRect,
 						4 * MyApplication.density,
 						4 * MyApplication.density,
 						backgroundPaint
 					)
-				} else {
-					canvas.drawRect(
-						bgRect,
-						backgroundPaint
-					)
-				}
 			}
 			if (stripeValue) {
-				stripePaint.color = ColorUtils.astolfoRainbow(rainbowDelayValue, modules.size, if (colorReversedSortValue) modules.size - i else i)
+				stripePaint.color = ColorUtils.getRainbow()
 				if (!textRTLValue) {
-					val stripeRight = bgLeft * 2 - stripeOffsetValue
+					val stripeRight = bgLeft * 2 - 5
 					val stripeRect = RectF(bgLeft, bgTop, stripeRight, bgBottom)
-					if(stripeRoundValue){
 						canvas.drawRoundRect(
 							stripeRect,
 							4 * MyApplication.density,
 							4 * MyApplication.density,
 							stripePaint
 						)
-					} else {
-						canvas.drawRect(
-							stripeRect,
-							stripePaint
-						)
-					}
 				} else {
-					val stripeLeft = maxWidth + stripeOffsetValue
+					val stripeLeft = maxWidth + 5
 					val stripeRect = RectF(stripeLeft, bgTop, bgRight, bgBottom)
-					if(stripeRoundValue){
 						canvas.drawRoundRect(
 							stripeRect,
 							4 * MyApplication.density,
 							4 * MyApplication.density,
 							stripePaint
 						)
-					} else {
-						canvas.drawRect(
-							stripeRect,
-							stripePaint
-						)
-					}
 				}
 			}
 			canvas.drawText(
@@ -266,6 +224,9 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 		if (width != maxWidth) {
 			needRefresh.set(true)
 			width = maxWidth
+		}
+		if(colorModeValue == ColorMode.RAINBOW || backgroundColorModeValue == BackgroundColorMode.RAINBOW || stripeValue){
+			needRefresh.set(true)
 		}
 	}
 
@@ -311,22 +272,23 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 
 	enum class ColorMode(override val choiceName: String) : NamedChoice {
 		CUSTOM("Custom") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int {
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int): Int {
 				return Color.rgb(r, g, b)
 			}
 		},
 		HUE("Hue") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int {
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int): Int {
 				return dev.sora.protohax.util.Color.HSBtoRGB(index.toFloat() / size, 0.5f, 1f)
 			}
 		},
 		RAINBOW("RainBow") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int {
-				return ColorUtils.astolfoRainbow(delay, size, index)
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int): Int {
+				val color = ColorUtils.getRainbow()
+				return Color.rgb(color.red, color.green, color.blue)
 			}
 		},
 		SATURATION_SHIFT_ASCENDING("SaturationShift") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int {
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int): Int {
 				val hsv = floatArrayOf(0f, 0f, 0f)
 				Color.colorToHSV(Color.rgb(r, g, b), hsv)
 				hsv[2] = index.toFloat() / size
@@ -334,32 +296,32 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 			}
 		};
 
-		abstract fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int): Int
+		abstract fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int): Int
 	}
 
 	enum class BackgroundColorMode(override val choiceName: String) : NamedChoice {
 		CUSTOM("Custom") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int {
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, alpha: Int): Int {
 				return Color.argb(alpha, r, g, b)
 			}
 		},
 		HUE("Hue") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int {
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, alpha: Int): Int {
 				return dev.sora.protohax.util.Color.HSBtoRGB(index.toFloat() / size, 0.5f, 1f)
 			}
 		},
 		RAINBOW("RainBow") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int {
-				return ColorUtils.astolfoRainbow(delay, size, index)
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, alpha: Int): Int {
+				return ColorUtils.getRainbow()
 			}
 		},
 		BLACK("Black") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int {
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, alpha: Int): Int {
 				return Color.BLACK
 			}
 		},
 		SATURATION_SHIFT_ASCENDING("SaturationShift") {
-			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int {
+			override fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, alpha: Int): Int {
 				val hsv = floatArrayOf(0f, 0f, 0f)
 				Color.colorToHSV(Color.rgb(r, g, b), hsv)
 				hsv[2] = index.toFloat() / size
@@ -367,6 +329,6 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 			}
 		};
 
-		abstract fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, delay: Int, alpha: Int): Int
+		abstract fun getColor(index: Int, size: Int, r: Int, g: Int, b: Int, alpha: Int): Int
 	}
 }

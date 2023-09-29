@@ -14,7 +14,6 @@ import dev.sora.protohax.util.ColorUtils
 import dev.sora.relay.cheat.module.CheatModule
 import dev.sora.relay.cheat.module.EventModuleToggle
 import dev.sora.relay.cheat.value.NamedChoice
-import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
 
@@ -47,36 +46,36 @@ class ModuleIndicatorElement : HudElement(HudManager.MODULE_INDICATOR_ELEMENT_ID
 	private var stripeBlurValue by boolValue("Stripe Blur", true).visible {
 		stripeValue
 	}
-	private var stripeBlurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { stripeBlurValue && stripeValue }
-	private var stripeBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..80f).visible { stripeBlurValue && stripeValue }
+	private var stripeBlurModeValue by listValue("Stripe Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { stripeBlurValue && stripeValue }
+	private var stripeBlurRadiusValue by floatValue("Stripe Blur Radius", 1f, 0f..80f).visible { stripeBlurValue && stripeValue }
 	private var backgroundValue by boolValue("Background", false)
-	private var backgroundBlurValue by boolValue("Blur", true).visible {
+	private var backgroundBlurValue by boolValue("Background Blur", true).visible {
 		backgroundValue
 	}
-	private var backgroundBlurModeValue by listValue("Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { backgroundBlurValue && backgroundValue }
-	private var backgroundBlurRadiusValue by floatValue("Blur Radius", 1f, 0f..80f).visible { backgroundBlurValue && backgroundValue }
+	private var backgroundBlurModeValue by listValue("Background Blur Mode", HudBlurMode.values(), HudBlurMode.NORMAL).visible { backgroundBlurValue && backgroundValue }
+	private var backgroundBlurRadiusValue by floatValue("Background Blur Radius", 1f, 0f..80f).visible { backgroundBlurValue && backgroundValue }
 	private var backgroundColorModeValue by listValue(
-		"Background Mode",
+		"Background ColorMode",
 		BackgroundColorMode.values(),
 		BackgroundColorMode.CUSTOM
 	).visible { backgroundValue }
 	private var backgroundColorRedValue by intValue(
-		"ColorRed",
+		"Background ColorRed",
 		255,
 		0..255
 	).visible { backgroundColorModeValue != BackgroundColorMode.HUE && backgroundColorModeValue != BackgroundColorMode.RAINBOW && backgroundColorModeValue != BackgroundColorMode.BLACK && backgroundValue }
 	private var backgroundColorGreenValue by intValue(
-		"ColorGreen",
+		"Background ColorGreen",
 		255,
 		0..255
 	).visible { backgroundColorModeValue != BackgroundColorMode.HUE && backgroundColorModeValue != BackgroundColorMode.RAINBOW && backgroundColorModeValue != BackgroundColorMode.BLACK && backgroundValue }
 	private var backgroundColorBlueValue by intValue(
-		"ColorBlue",
+		"Background ColorBlue",
 		255,
 		0..255
 	).visible { backgroundColorModeValue != BackgroundColorMode.HUE && backgroundColorModeValue != BackgroundColorMode.RAINBOW && backgroundColorModeValue != BackgroundColorMode.BLACK && backgroundValue }
 	private var backgroundAlphaValue by intValue(
-		"Alpha",
+		"Background Alpha",
 		120,
 		0..255
 	).visible { backgroundColorModeValue != BackgroundColorMode.HUE && backgroundColorModeValue != BackgroundColorMode.RAINBOW && backgroundColorModeValue != BackgroundColorMode.BLACK && backgroundValue }

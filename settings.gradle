@@ -15,7 +15,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = 'https://maven.pkg.github.com/cjqnsh0u/ProtoHax'
+            url = 'https://maven.pkg.github.com/shria-b/ProtoHax'
             credentials {
                 username = System.getenv("USERNAME_GITHUB")
                 password = System.getenv("TOKEN_GITHUB")
